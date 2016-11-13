@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "{{.Values.dnsName }}"
+  labels:
+    heritage: "{{ .Release.Service }}"
+    release: "{{ .Release.Name }}"
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  selector:
+    app: "{{.Values.dnsName }}"
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{.Values.servicePort }}
+      targetPort: {{.Values.containerPort }}
+  type: "ClusterIP"

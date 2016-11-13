@@ -1,0 +1,11 @@
+name: hello
+description: A basic HTTP server
+version: 0.1.0
+keywords:
+  - http
+home: "https://github.com/fiunchinho/nginx-circuit-breaker"
+sources:
+  - "https://hub.docker.com/fiunchinho/hello"
+maintainers:
+  - name: Jose Armesto
+    email: jose@armesto.net

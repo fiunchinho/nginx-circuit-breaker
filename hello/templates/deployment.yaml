@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "{{.Values.dnsName }}"
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  replicas: "{{default 1 .Values.replicaCount}}"
+  template:
+    metadata:
+      labels:
+        app: "{{.Values.dnsName }}"
+        release: {{.Release.Name | quote }}
+    spec:
+      containers:
+        - name: "{{.Values.dnsName }}"
+          image: "{{.Values.imageName }}:{{default "latest" .Values.imageTag}}"
+          imagePullPolicy: {{default "IfNotPresent" .Values.pullPolicy}}
+          ports:
+            - containerPort: {{.Values.containerPort | quote }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{.Values.containerPort }}
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{.Values.containerPort }}
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 3

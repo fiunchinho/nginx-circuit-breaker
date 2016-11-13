@@ -1,13 +1,13 @@
 version: '2'
 services:
-  service1:
-    build: ./service
-    image: go-service1
+  hello1:
+    build: ./hello
+    image: go-hello1
     ports:
       - 8001:8000
-  service2:
-    build: ./service
-    image: go-service2
+  hello2:
+    build: ./hello
+    image: go-hello2
     ports:
       - 8002:8000
   nginx:

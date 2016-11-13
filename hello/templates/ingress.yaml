@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "{{.Values.dnsName }}"
+  annotations:
+    ingress.kubernetes.io/upstream-fail-timeout: "60"
+    ingress.kubernetes.io/upstream-max-fails: "2"
+spec:
+  rules:
+    - host: "{{.Values.dnsName }}.armesto.dev"
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: "{{.Values.dnsName }}"
+              servicePort: {{.Values.servicePort}}

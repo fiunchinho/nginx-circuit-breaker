@@ -1,0 +1,6 @@
+imageName: go-hello1
+imageTag: "latest"
+servicePort: 8000
+containerPort: 8000
+replicaCount: 3
+dnsName: hello1

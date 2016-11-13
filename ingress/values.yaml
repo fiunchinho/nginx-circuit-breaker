@@ -1,0 +1,8 @@
+# See the list at https://hub.docker.com/r/library/nginx/tags/
+imageTag: "1.11.0"
+
+# The port (defined on the service) to access the HTTP server.
+httpPort: 8888
+
+# Number of nginx instances to run
+replicaCount: 1
