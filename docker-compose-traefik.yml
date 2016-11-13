@@ -1,0 +1,28 @@
+version: '2'
+services:
+  hello1:
+    build: ./hello
+    image: go-hello1
+    labels:
+      - "traefik.backend=hello1"
+      - "traefik.backend.circuitbreaker.expression=ResponseCodeRatio(500, 600, 0, 600) > 0.1"
+      - "traefik.backend.circuitbreaker.expression=NetworkErrorRatio() > 0.1"
+      - "traefik.frontend.rule=Host:hello1.docker.localhost"
+  hello2:
+    build: ./hello
+    image: go-hello2
+    labels:
+      - "traefik.backend=hello2"
+      - "traefik.backend.circuitbreaker.expression=ResponseCodeRatio(500, 600, 0, 600) > 0.1"
+      - "traefik.backend.circuitbreaker.expression=NetworkErrorRatio() > 0.1"
+      - "traefik.hello2.circuitbreaker.expression=ResponseCodeRatio(500, 600, 0, 600) > 0.1"
+      - "traefik.frontend.rule=Host:hello2.docker.localhost"
+  traefik:
+    image: traefik
+    command: --web --docker --docker.domain=docker.localhost --logLevel=DEBUG
+    ports:
+      - 8000:80
+      - 8888:8080
+    volumes:
+      - "$PWD/traefik/traefik.toml:/etc/traefik/traefik.toml"
+      - "/var/run/docker.sock:/var/run/docker.sock"
