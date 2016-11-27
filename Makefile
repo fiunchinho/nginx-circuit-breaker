@@ -14,11 +14,11 @@ publish: compile
 helm: publish
 	helm install --debug ${name}
 
-up: compile
+run: compile
 	docker-compose down
 	docker-compose up --build -d
 
-down:
+clean:
 	docker-compose down
 
 logs:

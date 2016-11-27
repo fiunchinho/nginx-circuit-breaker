@@ -14,32 +14,35 @@ type Response struct {
     Message string `json:"message"`
 }
 
-type Toggle struct {
+type Dispatcher struct {
     errorMode bool
 }
 
 func main() {
-    var h = Toggle{false}
+    var d = Dispatcher{false}
 
     mux := http.NewServeMux()
 
-    mux.HandleFunc("/health", healthHandler)
-    mux.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
-        if r.Method == "POST" {
-            h.errorMode = !h.errorMode
-            sendResponse(w, r, 0, "Toggled error mode", http.StatusOK)
-        } else if h.errorMode  == true {
-            sendResponse(w, r, 3000, "Something went wrong", http.StatusServiceUnavailable)
-        } else {
-            sendResponse(w, r, 1000, "Success", http.StatusOK)
-        }
-    })
+    mux.HandleFunc("/health", d.healthHandler)
+    mux.HandleFunc("/", d.requestHandler)
 
     log.Fatal(http.ListenAndServe(":8000", mux))
     log.Printf("HTTP service listening on 8000")
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
+func (d *Dispatcher) requestHandler(w http.ResponseWriter, r *http.Request) {
+    var sleep, _ = strconv.Atoi(r.URL.Query().Get("sleep"))
+    if r.Method == "POST" {
+        d.errorMode = !d.errorMode
+        sendResponse(w, r, 0, "Toggled error mode", http.StatusOK)
+    } else if d.errorMode  == true {
+        sendResponse(w, r, sleep, "Something went wrong", http.StatusServiceUnavailable)
+    } else {
+        sendResponse(w, r, sleep, "Success", http.StatusOK)
+    }
+}
+
+func (d *Dispatcher) healthHandler(w http.ResponseWriter, r *http.Request) {
     sendResponse(w, r, 0, "OK", http.StatusOK)
 }
 
@@ -59,7 +62,7 @@ func sendResponse(w http.ResponseWriter, r *http.Request, timeout int, response 
 
 func logCombined(logger *log.Logger, r *http.Request, status int) {
     t := time.Now()
-    logger.Printf(r.RemoteAddr + " [" + t.Format("02/Jan/2006:15:04:05Z") + "] \"" + r.Method + " " + r.RequestURI + " " + r.Proto + "\" " + strconv.Itoa(status) + " \"" + r.Referer() + "\" " + "\"" + r.UserAgent() + "\"")
+    logger.Printf(r.RemoteAddr + " [" + t.Format("02/Jan/2006:15:04:05") + "] \"" + r.Method + " " + r.RequestURI + " " + r.Proto + "\" " + strconv.Itoa(status) + " \"" + r.Referer() + "\" " + "\"" + r.UserAgent() + "\"")
 }
 
 func logHostname() {
